@@ -40,7 +40,7 @@ cls
 echo Install [F]
 echo Back
 set game=%1
-Start /b "" cmdbkg %game%.bmp 20 includeborders
+rem Start /b "" cmdbkg %game%.bmp 20 includeborders
 GetInput /M  0 0 6 0  0 1 3 1  8 0 10 0/H
 if %errorlevel%==1  goto :install
 if %errorlevel%==2  goto :GameList
@@ -103,7 +103,9 @@ set arquivo=%arquivo:7lsW=\%
 set arquivo=%arquivo:FuckingSpaceHere= %
 rem set link=%link:/s5000/=/s1279/% for future compression option
 rem set link=%link:/s5080/=/s1919/% 1080p games have 5080 link
-<nul set /p"=%baixados%/%arquivos% %arquivo%            !CR!"
+set statuss=%baixados%/%arquivos% %arquivo%                                                                                               
+set status1=%statuss:~0,109%
+<nul set /p"=%status1%!CR!"
 if "%created%"=="0" (
 copy /Y NUL "%arquivo%" > nul
 set /a arquivos+=1
