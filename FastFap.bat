@@ -1,5 +1,13 @@
 @echo off
 setlocal enableextensions enabledelayedexpansion
+echo Special thanks to:
+echo [34mTheBatTeam.org[0m ^& [91mStackOverflow.com[0m for code help
+echo [31mMikael Sollenborn (misol101)[0m for cmdbkg.exe
+echo [32mLionello Lunesu (soepy)[0m for fart.exe
+echo [33mAntonio Perez Ayala (Aacini)[0m for GetInput.exe
+echo [36mF95zone[0m for stealing games.
+echo [35mWindows 10[0m for new features like coloring, curl and tar
+echo.
 :getstuffready
 if not exist "%temp%\fastfap" mkdir "%temp%\fastfap"&goto :getstuffready
 set path=%path%;%temp%\fastfap
@@ -16,6 +24,8 @@ if not exist "%temp%\fastfap\Tamas.Awakening.bmp" echo Downloading Tamas.Awakeni
 if not exist "%temp%\fastfap\Something.Special.bmp" echo Downloading Something.Special.bmp...&curl -s -o "%temp%\fastfap\Something.Special.bmp" https://vaguiner.eu.org/basegames/Something.Special.bmp
 if not exist "%temp%\fastfap\Insexual.Awakening.bmp" echo Downloading Insexual.Awakening.bmp...&curl -s -o "%temp%\fastfap\Insexual.Awakening.bmp" https://vaguiner.eu.org/basegames/Insexual.Awakening.bmp
 if not exist "%temp%\fastfap\Dreams.of.Desire.bmp" echo Downloading Dreams.of.Desire.bmp...&curl -s -o "%temp%\fastfap\Dreams.of.Desire.bmp" https://vaguiner.eu.org/basegames/Dreams.of.Desire.bmp
+if not exist "%temp%\fastfap\Dreams.of.Desire.Holiday.Special.bmp" echo Downloading Dreams.of.Desire.Holiday.Special.bmp...&curl -s -o "%temp%\fastfap\Dreams.of.Desire.Holiday.Special.bmp" https://vaguiner.eu.org/basegames/Dreams.of.Desire.Holiday.Special.bmp
+if not exist "%temp%\fastfap\Dreams.of.Desire.The.Lost.Memories.bmp" echo Downloading Dreams.of.Desire.The.Lost.Memories.bmp...&curl -s -o "%temp%\fastfap\Dreams.of.Desire.The.Lost.Memories.bmp" https://vaguiner.eu.org/basegames/Dreams.of.Desire.The.Lost.Memories.bmp
 :start
 mode 110,31
 set fastdl=
@@ -23,29 +33,53 @@ set seed=%random%%random%%random%
 for /f %%a in ('copy /Z "%~dpf0" nul') do set "CR=%%a"
 :GameList
 cls
-echo Gates.Motel
-echo Tamas.Awakening
-echo Something.Special
-echo Insexual.Awakening
-echo Dreams.of.Desire
-GetInput /M  0 0 10 0  0 1 14 1  0 2 16 2  0 3 17 3  0 4 15 4 /H
-if %errorlevel%==1  call :GameInfo Gates.Motel
-if %errorlevel%==2  call :GameInfo Tamas.Awakening
-if %errorlevel%==3  call :GameInfo Something.Special
-if %errorlevel%==4  call :GameInfo Insexual.Awakening
-if %errorlevel%==5  call :GameInfo Dreams.of.Desire
-goto :GameList
+set game[0]=Gates.Motel
+set game[1]=Tamas.Awakening
+set game[2]=Something.Special
+set game[3]=Insexual.Awakening
+set game[4]=Dreams.of.Desire
+set game[5]=Dreams.of.Desire.Holiday.Special
+set game[6]=Dreams.of.Desire.The.Lost.Memories
+set x=0
+:NumberOfApps
+if defined game[%x%] (
+   set /a x+=1
+   GOTO :NumberOfApps 
+)
+set /a x-=1
+for /l %%n in (0,1,%x%) do ( 
+   echo !game[%%n]! 
+)
+GetInput
+set /A "input=-%errorlevel%, row=input >> 16, col=input & 0xFFFF"
+set SelectetdGame=!game[%row%]!
+if "%SelectetdGame%"=="" goto :GameList
 :GameInfo
 cls
 echo Install [F]
 echo Back
-set game=%1
-rem Start /b "" cmdbkg %game%.bmp 20 includeborders
-GetInput /M  0 0 6 0  0 1 3 1  8 0 10 0/H
-if %errorlevel%==1  goto :install
-if %errorlevel%==2  goto :GameList
-if %errorlevel%==3  set fastdl=start /B &goto :install
-goto :GameList
+set game=%SelectetdGame%
+Start /b "" cmdbkg %game%.bmp 20 includeborders
+:ae
+GetInput
+set /A "input=-%errorlevel%, row=input >> 16, col=input & 0xFFFF"
+if %row%==0 (
+	if %col% leq 6 (
+		goto :install
+	)
+	if %col% geq 8 (
+		if %col% leq 10 (
+			set fastdl=start /B 
+			goto :install
+		)
+	)
+)
+if %row%==1 (
+	if %col% leq 3 (
+		goto :GameList
+	)
+)
+goto :ae
 :install
 mkdir games
 cd games
@@ -84,6 +118,7 @@ del %game%.zip.tar
 del %seed%
 set baixados=0
 set created=0
+set arquivos=0
 :loophere
 rem This fucking space on file name kills me
 fart -q %game%.Links.txt "%%2B" "FuckingSpaceHere"
